@@ -614,3 +614,13 @@
   614  cd Final-Repository
   615  cd ~/Final-Repository
   616  history > ~/Final-Repository/final.commandhistory.txt
+  617  find . -size +5M | sed 's|^\./||g' | cat >> .gitignore; awk '!NF || !seen[$0]++' .gitignore
+  618  git add .
+  619  git commit -a -m "Adding all new data files I generated in AWS to the repository."
+  620  git pull --rebase=false --no-edit
+  621  git push
+  622  git clone https://github.com/s4-aejin/Final-Repository.git
+  623  cd Final-Repository
+  624  git pull
+  625  cd ~/Final-Repository
+  626  history > ~/Final-Repository/final.commandhistory.txt
