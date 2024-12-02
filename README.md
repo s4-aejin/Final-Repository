@@ -158,6 +158,95 @@ git push
 
 ## Lab 5: Gene Family Phylogeny using IQ-TREE
 ### Purpose of the Lab 5
+*Making phylogenetic trees for gene familes using IQ-TREE, rooting methods, a d visualization tools*
+
+*Call Lab 5*
+```
+git clone https://github.com/Bio312/lab05-$MYGIT
+
+cd lab05-$MYGIT
+```
+
+*Making a directory in lab 5 for the globin tree*
+```
+mkdir ~/lab05-$MYGIT/globins
+
+cd ~/lab05-$MYGIT/globins  
+```
+
+*Make sure that sequences with duolicate labels are removed and create a clean alignment file for use in Lab 5* 
+```
+sed 's/ /_/g'  ~/lab04-$MYGIT/globins/globins.homologs.al.fas | seqkit grep -v -r -p "dupelabel" >  ~/lab05-$MYGIT/globins/globins.homologsf.al.fas
+```
+
+*Use IQ-Tree to calculate the optim amino acid substitution model an d amin o acid frequen cies and estimate branch lengths as they go*
+```
+iqtree -s ~/lab05-$MYGIT/globins/globins.homologsf.al.fas -bb 1000 -nt 2 
+```
+
+*Substitution model - read the tree in a Newick format*
+```
+nw_display ~/lab05-$MYGIT/globins/globins.homologsf.al.fas.treefile
+```
+
+*Look at the unrooted tree - use R script to look at the unrooted tree with a graphical display*
+```
+Rscript --vanilla ~/lab05-$MYGIT/plotUnrooted.R  ~/lab05-$MYGIT/globins/globins.homologsf.al.fas.treefile ~/lab05-$MYGIT/globins/globins.homologsf.al.fas.treefile.pdf 0.4 15
+```
+
+*Root in the optimal phylogeny*
+
+*1. Midpoint rooting*
+```
+gotree reroot midpoint -i ~/lab05-$MYGIT/globins/globins.homologsf.al.fas.treefile -o ~/lab05-$MYGIT/globins/globins.homologsf.al.mid.treefile
+
+nw_order -c n ~/lab05-$MYGIT/globins/globins.homologsf.al.mid.treefile  | nw_display -
+```
+
+*make graphic image*
+```
+nw_order -c n ~/lab05-$MYGIT/globins/globins.homologsf.al.mid.treefile | nw_display -w 1000 -b 'opacity:0' -s  >  ~/lab05-$MYGIT/globins/globins.homologsf.al.mid.treefile.svg -
+```
+
+*make PDF*
+```
+convert  ~/lab05-$MYGIT/globins/globins.homologsf.al.mid.treefile.svg  ~/lab05-$MYGIT/globins/globins.homologsf.al.mid.treefile.pdf
+```
+
+*2. Branch lengths*
+*switching the view to a cladogram*
+```
+nw_order -c n ~/lab05-$MYGIT/globins/globins.homologsf.al.mid.treefile | nw_topology - | nw_display -s  -w 1000 > ~/lab05-$MYGIT/globins/globins.homologsf.al.midCl.treefile.svg -
+
+convert ~/lab05-$MYGIT/globins/globins.homologsf.al.midCl.treefile.svg ~/lab05-$MYGIT/globins/globins.homologsf.al.midCl.treefile.pdf
+```
+
+*3. Outgroup rooting*
+*specifying an outgroup, a group that we know based on outside evidence is more distantly relat4ed than any of lineages in the ingroup*
+```
+nw_reroot ~/lab05-$MYGIT/globins/globins.homologsf.al.fas.treefile H.sapiens_HBG1_hemoglobin_subunit_gamma1 H.sapiens_HBG2_hemoglobin_subunit_gamma2 H.sapiens_HBB_hemoglobin_subunit_beta H.sapiens_HBD_hemoglobin_subunit_delta >~/lab05-$MYGIT/globins/globins.homologsf.outgroupbeta.treefile
+
+nw_order -c n ~/lab05-$MYGIT/globins/globins.homologsf.outgroupbeta.treefile | nw_topology - | nw_display -s  -w 1000 > ~/lab05-$MYGIT/globins/globins.homologsf.outgroupbeta.treefile.svg -
+
+convert ~/lab05-$MYGIT/globins/globins.homologsf.outgroupbeta.treefile.svg ~/lab05-$MYGIT/globins/globins.homologsf.outgroupbeta.treefile.pdf
+```
+
+### Save and Push (end of the Lab 5)
+```
+history > lab5.commandhistory.txt
+
+cd ~/lab05-$MYGIT
+
+find . -size +5M | sed 's|^\./||g' | cat >> .gitignore; awk '!NF || !seen[$0]++' .gitignore
+
+git add .
+
+git commit -a -m "Adding all new data files I generated in AWS to the repository."
+
+git pull --no-edit
+
+git push 
+```
 
 ## Lab 6. Reconciling a Gene and Species Tree
 ### Purpose of the Lab 6
