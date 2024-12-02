@@ -250,6 +250,69 @@ git push
 
 ## Lab 6. Reconciling a Gene and Species Tree
 ### Purpose of the Lab 6
+*reconciling gene and species trees to identify duplication and loss events and understand gene family evolution*
+
+*Call Lab 6 and a directory called globins*
+```
+git clone https://github.com/Bio312/lab06-$MYGIT
+
+cd lab06-$MYGIT
+
+cd ~/lab06-$MYGIT/globins
+
+ls ~/lab06-$MYGIT/globins/globins.homologsf.outgroupbeta.treefile 
+
+```
+
+*Call tree from globins directory and drop the beta globin (outgroup) species because we are onlyh intterested in alpha globins (ingroup)*
+```
+gotree prune -i ~/lab06-$MYGIT/globins/globins.homologsf.outgroupbeta.treefile -o ~/lab06-$MYGIT/globins/globins.homologsf.pruned.treefile H.sapiens_HBG1_hemoglobin_subunit_gamma1 H.sapiens_HBG2_hemoglobin_subunit_gamma2 H.sapiens_HBB_hemoglobin_subunit_beta H.sapiens_HBD_hemoglobin_subunit_delta
+```
+
+*Create a new folder*
+```
+mkdir ~/lab06-$MYGIT/mygenefamily
+
+cp ~/lab05-$MYGIT/mygenefamily/mygenefamily.homologs.al.mid.treefile ~/lab06-$MYGIT/mygenefamily/mygenefamily.homologs.al.mid.treefile
+```
+
+*Reconcile the gene and species tree using Notnug*
+```
+java -jar ~/tools/Notung-3.0_24-beta/Notung-3.0_24-beta.jar -s ~/lab05-$MYGIT/species.tre -g ~/lab06-$MYGIT/globins/globins.homologsf.pruned.treefile --reconcile --speciestag prefix --savepng --events --outputdir ~/lab06-$MYGIT/globins/
+
+nw_display ~/lab05-$MYGIT/species.tre
+
+grep NOTUNG-SPECIES-TREE ~/lab06-$MYGIT/globins/globins.homologsf.pruned.treefile.rec.ntg | sed -e "s/^\[&&NOTUNG-SPECIES-TREE//" -e "s/\]/;/" | nw_display -
+```
+
+*Generate a RecPhyloXML object and view the gene within species tree via thridkind
+```
+python2.7 ~/tools/recPhyloXML/python/NOTUNGtoRecPhyloXML.py -g ~/lab06-$MYGIT/globins/globins.homologsf.pruned.treefile.rec.ntg --include.species
+
+thirdkind -Iie -D 40 -f ~/lab06-$MYGIT/globins/globins.homologsf.pruned.treefile.rec.ntg.xml -o  ~/lab06-$MYGIT/globins/globins.homologsf.pruned.treefile.rec.svg
+
+convert  -density 150 ~/lab06-$MYGIT/globins/globins.homologsf.pruned.treefile.rec.svg ~/lab06-$MYGIT/globins/globins.homologsf.pruned.treefile.rec.pdf
+```
+
+### Save and Push (end of the Lab 6)
+```
+history > lab6.commandhistory.txt
+
+cd ~/lab06-$MYGIT
+
+find . -size +8M | sed 's|^\./||g' | cat >> .gitignore; awk '!NF || !seen[$0]++' .gitignore
+
+git add.
+
+git status
+
+git commit -a -m "Adding all new data files I generated in AWS to the repository."
+
+git pull --no-edit
+
+git push 
+```
 
 ## Lab 8: Protein Domain Prediction
 ### Purpose of the Lab 8
+### Save and Push (end of the Lab 8)

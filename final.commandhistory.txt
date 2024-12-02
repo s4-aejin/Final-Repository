@@ -632,3 +632,10 @@
   632  git push
   633  	cd ~/Final-Repository
   634  history > ~/Final-Repository/final.commandhistory.txt
+  635  find . -size +5M | sed 's|^\./||g' | cat >> .gitignore; awk '!NF || !seen[$0]++' .gitignore
+  636  git add .
+  637  git commit -a -m "Adding all new data files I generated in AWS to the repository."
+  638  git pull --rebase=false --no-edit
+  639  git push
+  640  	cd ~/Final-Repository
+  641  history > ~/Final-Repository/final.commandhistory.txt
