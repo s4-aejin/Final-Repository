@@ -315,4 +315,67 @@ git push
 
 ## Lab 8: Protein Domain Prediction
 ### Purpose of the Lab 8
+*Identyfying protein domains using RPS-BLAST, mapping them onto phylogenetic trees, and analyzing domain evolution in gene familes*
+
+*Call Lab 8*
+```
+git clone https://github.com/Bio312/lab08-$MYGIT
+
+cd lab08-$MYGIT
+```
+
+*Make a directory for the globin sequences and make a copy of raw unaligned sequen ces, removing the asterisk (stop codon)*
+```
+mkdir ~/lab08-$MYGIT/globins && cd ~/lab08-$MYGIT/globins
+
+sed 's/*//' ~/lab04-$MYGIT/globins/globins.homologs.fas > ~/lab08-$MYGIT/globins/globins.homologs.fas
+```
+
+*We have Pfam database and will run RPS-BLAST*
+```
+rpsblast -query ~/lab08-$MYGIT/globins/globins.homologs.fas -db ~/data/Pfam/Pfam -out ~/lab08-$MYGIT/globins/globins.rps-blast.out  -outfmt "6 qseqid qlen qstart qend evalue stitle" -evalue .0000000001
+```
+
+*Using gene tree from lab 5, we can plot the predicted Pfam domains on the phylogeny.*
+*The script that Dr.Rest wrote, plotTreeAndDomains.r, was used.*
+```
+cp ~/lab05-$MYGIT/globins/globins.homologsf.outgroupbeta.treefile ~/lab08-$MYGIT/globins
+
+Rscript  --vanilla ~/lab08-$MYGIT/plotTreeAndDomains.r ~/lab08-$MYGIT/globins/globins.homologsf.outgroupbeta.treefile ~/lab08-$MYGIT/globins/globins.rps-blast.out ~/lab08-$MYGIT/globins/globins.tree.rps.pdf
+```
+
+*The domain-on-tree graphic that we just produced using Dr.Rest's R script and loot at the predited domains in more detail.
+Can find which Pfam domain annotation is most commonly found, the shortest annotated protein domain or the longest one, and the best e-vlaue*
+
+```
+mlr --inidx --ifs "\t" --opprint  cat ~/lab08-$MYGIT/globins/globins.rps-blast.out | tail -n +2 | less -S
+
+cut -f 1 ~/lab08-$MYGIT/globins/globins.rps-blast.out | sort | uniq -c
+
+cut -f 6 ~/lab08-$MYGIT/globins/globins.rps-blast.out | sort | uniq -c
+
+awk '{a=$4-$3;print $1,'\t',a;}' ~/lab08-$MYGIT/globins/globins.rps-blast.out |  sort  -k2nr
+
+cut -f 1,5 -d $'\t' ~/lab08-$MYGIT/globins/globins.rps-blast.out 
+```
+
+
 ### Save and Push (end of the Lab 8)
+
+```
+history > lab8.commandhistory.txt
+
+cd ~/lab08-$MYGIT
+
+find . -size +5M | sed 's|^\./||g' | cat >> .gitignore; awk '!NF || !seen[$0]++' .gitignore
+
+git add .
+
+git status
+
+git commit -a -m "Adding all new data files I generated in AWS to the repository."
+
+git pull --no-edit
+
+git push
+```
